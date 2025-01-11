@@ -5,11 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR and URL Scanner</title>
     <link rel="stylesheet" href="bulma.min.css"/>
-    <link rel="stylesheet" href="extend.css"/>
     <script type="module" src="popup.js" defer></script>
     <script src="jsQR.min.js"></script>
 
-    
+    <style>
+        /* Make sure the container is wide enough */
+        .container {
+            max-width: 100%; /* Allow the container to stretch to 100% of the viewport width */
+            padding-right: 20px; /* Add padding to ensure content doesn't touch edges */
+        }
+    </style>
 </head>
 <body>
     
@@ -18,7 +23,7 @@
         <div class="field">
             <div class="control">
                 <div class="control">
-                    <button id="toggleButton" class="button is-primary">QR/URL</button>
+                    <button id="toggleButton" class="button is-primary" >QR/URL</button>
                 </div>
                 
             </div>

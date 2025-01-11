@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const qrContent = `
     <div class="container m-3">
         <div class="field">
-            <button class="button" id="captureScreenshot">Scan QR on screen</button>
+            <button class="button custom-dark" id="captureScreenshot">Scan QR on screen</button>
         </div>
     </div>
 
@@ -28,16 +28,21 @@ document.addEventListener('DOMContentLoaded', function() {
         <div id="file-js-example" class="file has-name">
             <label class="file-label">
                 <input class="file-input" type="file" name="resume" />
-                <span class="file-cta">
+                <span class="file-cta custom-dark" style="width: 130px;">
                     <span class="file-icon">
                         <i class="fas fa-upload"></i>
                     </span>
-                    <span class="file-label"> Choose a file… </span>
+                    <span class="file-label"> Select file </span>
                 </span>
-                <span class="file-name"> No file uploaded </span>
+                <span class="file-name custom-dark"> No file uploaded </span>
             </label>
         </div>
     </div>
+
+    <div class="container m-3">
+        <p style="color: orange; font-weight: bold;">Ensure only one QR code is visible or uploaded to avoid errors</p>
+    </div>
+
 
     
 
@@ -47,6 +52,39 @@ document.addEventListener('DOMContentLoaded', function() {
         <button id="qrAnalyseButton" class="button is-link" disabled >Analyse</button>
         
     </div>
+
+    <!-- Custom CSS for Light Background and Text Color -->
+    <style>
+        .custom-dark {
+            background-color:rgb(54, 54, 54); /* Dark background */
+            color: #f5f5f5; /* Light text color */
+            border: 1px solid #4a4a4a; /* Light border */
+            font-weight: normal;
+        }
+
+        .custom-dark .file-label {
+            color: #f5f5f5; /* Light text color inside the button */
+            
+        }
+
+        .custom-dark .file-label:hover {
+            color: #e0e0e0; /* Slightly lighter text color on hover */
+        }
+
+        .custom-dark:hover {
+            background-color: #4a4a4a; /* Darker background on hover */
+        }
+
+        .custom-dark .file-name {
+            color: #f5f5f5; /* Light text color for file name */
+           
+        }
+
+        .custom-dark .file-name:hover {
+            color: #e0e0e0; /* Lighter color on hover for file name */
+        }
+    </style>
+
     `;
 
     const urlContent = `
@@ -108,57 +146,66 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="container m-3">
             <div class="field is-horizontal">
                 <div class="field-label is-normal">
-                    <label class="label">Result:</label>
+                    <label class="label has-text-weight-bold">Title:</label>
                 </div>
                 <div class="field-body">
                     <div class="field">
-                        <div class="control">
-                            <span id="flagResult" class="tag is-success"></span>
-                            <p id="title" >hello this should change</p>
-                        </div>
+                        <p id="title" class=" has-text-info">Unavailable</p>
+                    </div>
+                <div class="field-label is-normal">
+                    <label class="label has-text-weight-bold">Final URL:</label>
+                </div>
+                </div>
+                <div class="field-body">
+                    <div class="field">
+                        <p id="finalURL">redirectedURL</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="field is-grouped is-grouped-multiline">
-            <div class="control">
+        <div class="container m-3 field is-grouped is-grouped-multiline">
+            
+            <div class="control mr-1">
                 <div class="tags has-addons">
-                    <span class="tag is-dark">Reputation</span>
-                    <span id="reputation" class="tag is-info">URL</span>
+                    <span class="tag is-dark">VirusTotal Flagged Results </span>
+                    <span id="flagResult" class="tag is-success"></span>
                 </div>
             </div>
-            <div class="control">
+
+            <div class="control mr-1">
+                <div class="tags has-addons">
+                    <span class="tag is-dark">Reputation</span>
+                    <span id="reputation" class="tag is-success">Neutral</span>
+                </div>
+            </div>
+
+            <div class="control mr-1">
                 <div class="tags has-addons">
                     <span class="tag is-dark">IP</span>
                     <span id="ip" class="tag is-info">ip</span>
                 </div>
             </div>
-            <div class="control">
-                <div class="tags has-addons">
-                    <span class="tag is-dark">URL</span>
-                    <span id="url" class="tag is-info" style="word-break: break-all; overflow-wrap: break-word;">url</span>
-                </div>
-            </div>
-            <div class="control">
+
+            <div class="control mr-1">
                 <div class="tags has-addons">
                     <span class="tag is-dark">Domain</span>
                     <span id="domain" class="tag is-info">domain</span>
                 </div>
             </div>
-            <div class="control">
+            <div class="control mr-1">
                 <div class="tags has-addons">
                     <span class="tag is-dark">Country</span>
                     <span id="country" class="tag is-info">country</span>
                 </div>
             </div>
-            <div class="control">
+            <div class="control mr-1">
                 <div class="tags has-addons">
                     <span class="tag is-dark">Category</span>
                     <span id="uniqueCategoryNames" class="tag is-info">cat</span>
                 </div>
             </div>
-            <div class="control">
+            <div class="control mr-1">
                 <div class="tags has-addons">
                     <span class="tag is-dark">Certificate</span>
                     <span class="tag is-primary">Yes</span>
@@ -168,11 +215,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         <div class="container m-3">
             <figure class="image is-180x180">
-                <img id="screenshotURL" src="" alt="Screenshot" style="width: 50%; max-width: 100%; height: auto;">
+                <img id="screenshotURL" src="" alt="Screenshot" style="width: 100%; max-width: 100%; height: auto;">
             </figure>
+            
+        </div>
+        <div class="container m-3">
+            
             <button id="fullReportButton" class="button is-link">Report in Detail</button>
             <button id="exitButton" class="button is-link">Exit</button>
         </div>
+        
     `;
 
     const exitContent = `
@@ -184,10 +236,13 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
 
     const loadingContent = `
-        <div class="container m-3">
+        <div id="processMessages" class="container m-3">
             <p>Analysing ...</p>
             <p>This process will take more than 20 seconds..</p>
+        </div>
+        <div class="container m-3">
              <p  id="loader" style="display: none;"></p>
+             <p id="scanError" style="display: none;"></p> 
         </div>
     `;
 
@@ -214,7 +269,26 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     
-
+    chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+        const errorElement = document.getElementById('scanError');
+        if (message.type === 'dnsError') {
+            // Update the HTML to show the DNS error
+            errorElement.innerText = message.message;
+            errorElement.style.display = 'block';
+            errorElement.classList.add('has-text-danger');
+            // Hide the loader and process messages
+            document.getElementById('loader').style.display = 'none';  // Hide the loader
+            document.getElementById('processMessages').style.display = 'none';  // Hide all process messages
+        } else if (message.type === 'requestFailed') {
+            errorElement.innerText = `Request failed: URL Not Exist`;
+            errorElement.style.display = 'block';
+            errorElement.classList.add('has-text-danger');
+            // Hide the loader and process messages
+            document.getElementById('loader').style.display = 'none';  // Hide the loader
+            document.getElementById('processMessages').style.display = 'none';  // Hide all process messages
+        }
+    });
+    
         
 
 
@@ -248,6 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     else{
                         // Store the file
+                        errorMessage.style.display = 'none';
                         storeFile(file)
                         .then(() => {
                             document.getElementById('storeError').textContent = 'File uploaded successfully. Click "Analyze QR Code" to process.';
@@ -324,7 +399,7 @@ function decodeQR(dataURL) {
 
 function categorizeData(data) {
     // Check if the data is a URL
-    const urlPattern = /^(http|https):\/\/[^\s$.?#].[^\s]*$/;
+    const urlPattern = /^(https?:\/\/)?(www\.)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?(\?.*)?(#.*)?$/;
     if (urlPattern.test(data)) {
         return 'URL';
     }
@@ -339,6 +414,15 @@ function categorizeData(data) {
     const binaryPattern = /^[01]+$/;
     if (binaryPattern.test(data)) {
         return 'Binary';
+    }
+
+     // General code pattern: match common function call patterns, assignments, and symbols
+    const codePattern = /\b\w+\s*\(.*\)\s*\{|\b\w+\s*=\s*[^;]+;/; // Function call or assignment pattern
+    const symbolPattern = /[{}()\[\];,.]/; // Code symbols like {}, (), [], ;, etc.
+
+    // If any code-like structure is found (e.g., function calls, assignments, or symbols)
+    if (codePattern.test(data) || symbolPattern.test(data)) {
+        return 'Code';
     }
 
     // Default fallback: categorize it as text
@@ -487,9 +571,37 @@ function decodeNPrintText(){
             messagePromises.cloudflareResult,
         ]);
         
-        if (messagesReceived === 3) {
-            console.log("all 3 done, go analyse page")
+        
+
+            chrome.storage.local.get(['title', 'lastAnalysisDate', 'threatName', 'reputation', 'category', 'totalEngines', 'flag', 'ip', 'url', 'domain', 'city', 'country', 'tlsIssuer', 'tlsValidFrom', 'tlsValidDays', 'uniqueCategoryNames', 'rankResults', 'ipsList', 'domainsList', 'screenshotURL'], function (result) {
+                console.log("Retrieved scan data from local storage:", result);
+                title = result.title || 'N/A';                     
+                lastAnalysisDate =  result.lastAnalysisDate || 'N/A';
+                threatName = result.threatName || 'None';
+                reputation = result.reputation || 'N/A';
+                category = result.category || 'N/A';
+                totalEngines = result.totalEngines || '96';
+                flag = result.flag || '0';
+
+                ip = result.ip || 'N/A';
+                url = result.url || 'N/A';
+                domain= result.domain || 'N/A';
+                city = result.city || 'N/A';
+                country = result.country || 'N/A';
+                tlsIssuer = result.tlsIssuer || 'N/A';
+                tlsValidFrom = result.tlsValidFrom || 'N/A';
+                tlsValidDays = result.tlsValidDays || 'N/A';
+
+                uniqueCategoryNames = result.uniqueCategoryNames || 'N/A';
+                rankResults = result.rankResults || 'N/A';
+                ipsList = result.ipsList || 'None';
+                domainsList = result.domainsList || 'N/A';
+                screenshotURL=result.screenshotURL;
+
+
+
             content.innerHTML = analyseContent;
+
             let flagResult = `${flag}/${totalEngines}`;
             const flagElement = document.getElementById('flagResult');
                 if (flagElement) {
@@ -504,19 +616,62 @@ function decodeNPrintText(){
                         flagElement.className = 'tag is-success'; // Green
                     }
                 } 
+
+            const reputationElement = document.getElementById('reputation');
+            if (reputationElement) {
+                reputationElement.textContent = reputation;
+            
+                // Apply color based on reputation value
+                if (reputation === 'Negative') {
+                    reputationElement.className = 'tag is-danger'; // Red
+                } else if (reputation === 'Neutral') {
+                    reputationElement.className = 'tag is-warning'; // Orange
+                } else if (reputation === 'Positive') {
+                    reputationElement.className = 'tag is-success'; // Green
+                }
+            }
+
             document.getElementById('title').textContent=title; 
-            document.getElementById('reputation').textContent=reputation;
             document.getElementById('ip').textContent=ip;
-            document.getElementById('url').textContent=url;
+            document.getElementById('finalURL').textContent=url;
             document.getElementById('domain').textContent=domain;
             document.getElementById('country').textContent=country;
-            document.getElementById('uniqueCategoryNames').textContent=uniqueCategoryNames;
             document.getElementById('screenshotURL').src=screenshotURL;
+
+            // Split the uniqueCategoryNames into an array, trim, and filter for the priority categories
+            let categories = uniqueCategoryNames && uniqueCategoryNames.trim() ? uniqueCategoryNames.split(',').map(category => category.trim()) : [];
+
+            // Prioritize Malicious, Phishing, and Security threats
+            let prioritizedCategories = categories.filter(category => ['Malicious', 'Phishing', 'Security threats'].includes(category));
+
+            // Filter out the remaining categories
+            let otherCategories = categories.filter(category => !['Malicious', 'Phishing', 'Security threats'].includes(category));
+
+            // Combine the prioritized categories with the others, and take only the first two
+            let finalCategories = prioritizedCategories.concat(otherCategories).slice(0, 2);
+
+            // Set the text content for the element
+            document.getElementById('uniqueCategoryNames').textContent = finalCategories.join(', ').trim() || '';
+
+            const categoryElement = document.getElementById('uniqueCategoryNames');
+            if (categoryElement) {
+                // Check if any of the categories match the specific threat types
+                const hasThreatCategory = finalCategories.some(category => 
+                    ['Malicious', 'Phishing', 'Security threats'].includes(category)
+                );
+
+                // Apply red color (has-text-danger) if any of the threat categories are found
+                if (hasThreatCategory) {
+                    categoryElement.className = 'tag is-danger'; // Red for threats
+                    
+                } else {
+                    categoryElement.className = 'tag is-info'; // Green (default) for safe categories
+            
+                }
+            }
  
-    
-        }else{
-            console.log("this check done before all 3 done")
-        }
+        });
+        
     }
 
     
@@ -528,8 +683,10 @@ function decodeNPrintText(){
 
         else if (event.target && event.target.id === 'urlAnalyseButton') {
             const urlInput = document.getElementById('url-input');
-            // Regular expression to validate URL format
-            const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?(\?.*)?(#.*)?$/;
+            // Regular expression to validate standard URL format (domain-based URLs)
+            const urlPattern1 = /^(https?:\/\/)?(www\.)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?(\?.*)?(#.*)?$/;
+            // Regular expression to validate IP addresses with optional ports and paths
+            const urlPattern2 = /^(https?:\/\/)?(\d{1,3}\.){3}\d{1,3}(:\d+)?(\/[\w\-\.]+)*\/?(\?.*)?(#.*)?$/;
             
             if (urlInput) {
                 const enteredURL = urlInput.value;
@@ -540,8 +697,9 @@ function decodeNPrintText(){
                     return;
                 }
 
-                else if (!urlPattern.test(enteredURL)){
-                    document.getElementById('urlError').innerText='Error: Invalid URL format';
+                // Check if either of the patterns matches
+                else if (!urlPattern1.test(enteredURL) && !urlPattern2.test(enteredURL)) {
+                    document.getElementById('urlError').innerText = 'Error: Invalid URL format';
                     return;
                 }
     
@@ -549,6 +707,15 @@ function decodeNPrintText(){
                 resetState();
 
                 content.innerHTML = loadingContent;
+                            
+                document.getElementById('loader').style.display = 'block';  
+                document.getElementById('processMessages').style.display = 'block';  
+
+                const errorElement = document.getElementById('scanError');
+                errorElement.style.display = 'none';  // Hide the error message
+                errorElement.innerText = '';  // Clear the error message text
+                errorElement.classList.remove('has-text-danger');  // Remove red color
+
                 const loader = loadingAnimation();                 
 
                 // Send a message to the background script
@@ -576,11 +743,108 @@ function decodeNPrintText(){
                 chrome.storage.local.get(['lastScannedURL', 'scanStatus'], (data) => {
                     if (data.scanStatus === 'completed' && data.lastScannedURL) {
                         // Redirect to analysis page
-                        content.innerHTML = analyseContent;
                         console.log('Redirecting to analysis page for URL:', data.lastScannedURL);
 
                         // Optionally, call a function to process or display the results
-                        analyzeResults();
+                        chrome.storage.local.get(['title', 'lastAnalysisDate', 'threatName', 'reputation', 'category', 'totalEngines', 'flag', 'ip', 'url', 'domain', 'city', 'country', 'tlsIssuer', 'tlsValidFrom', 'tlsValidDays', 'uniqueCategoryNames', 'rankResults', 'ipsList', 'domainsList', 'screenshotURL'], function (result) {
+                            console.log("Retrieved scan data from local storage:", result);
+                            title = result.title || 'N/A';                     
+                            lastAnalysisDate =  result.lastAnalysisDate || 'N/A';
+                            threatName = result.threatName || 'None';
+                            reputation = result.reputation || 'N/A';
+                            category = result.category || 'N/A';
+                            totalEngines = result.totalEngines || '96';
+                            flag = result.flag || '0';
+            
+                            ip = result.ip || 'N/A';
+                            url = result.url || 'N/A';
+                            domain= result.domain || 'N/A';
+                            city = result.city || 'N/A';
+                            country = result.country || 'N/A';
+                            tlsIssuer = result.tlsIssuer || 'N/A';
+                            tlsValidFrom = result.tlsValidFrom || 'N/A';
+                            tlsValidDays = result.tlsValidDays || 'N/A';
+            
+                            uniqueCategoryNames = result.uniqueCategoryNames || 'N/A';
+                            rankResults = result.rankResults || 'N/A';
+                            ipsList = result.ipsList || 'None';
+                            domainsList = result.domainsList || 'N/A';
+                            screenshotURL=result.screenshotURL;
+            
+            
+            
+                        content.innerHTML = analyseContent;
+            
+                        let flagResult = `${flag}/${totalEngines}`;
+                        const flagElement = document.getElementById('flagResult');
+                            if (flagElement) {
+                                flagElement.textContent = flagResult;
+            
+                                // Apply color based on flag value using className
+                                if (parseInt(flag, 10) > 5) {
+                                    flagElement.className = 'tag is-danger'; // Red
+                                } else if (parseInt(flag, 10) > 0) {
+                                    flagElement.className = 'tag is-warning'; // Orange
+                                } else {
+                                    flagElement.className = 'tag is-success'; // Green
+                                }
+                            } 
+
+                        const reputationElement = document.getElementById('reputation');
+                        if (reputationElement) {
+                            reputationElement.textContent = reputation;
+                        
+                            // Apply color based on reputation value
+                            if (reputation === 'Negative') {
+                                reputationElement.className = 'tag is-danger'; // Red
+                            } else if (reputation === 'Neutral') {
+                                reputationElement.className = 'tag is-warning'; // Orange
+                            } else if (reputation === 'Positive') {
+                                reputationElement.className = 'tag is-success'; // Green
+                            }
+                        }
+            
+                        document.getElementById('title').textContent=title; 
+                        document.getElementById('ip').textContent=ip;
+                        document.getElementById('finalURL').textContent=url;
+                        document.getElementById('domain').textContent=domain;
+                        document.getElementById('country').textContent=country;
+                        document.getElementById('screenshotURL').src=screenshotURL;
+
+                        // Split the uniqueCategoryNames into an array, trim, and filter for the priority categories
+                        let categories = uniqueCategoryNames && uniqueCategoryNames.trim() ? uniqueCategoryNames.split(',').map(category => category.trim()) : [];
+
+                        // Prioritize Malicious, Phishing, and Security threats
+                        let prioritizedCategories = categories.filter(category => ['Malicious', 'Phishing', 'Security threats'].includes(category));
+
+                        // Filter out the remaining categories
+                        let otherCategories = categories.filter(category => !['Malicious', 'Phishing', 'Security threats'].includes(category));
+
+                        // Combine the prioritized categories with the others, and take only the first two
+                        let finalCategories = prioritizedCategories.concat(otherCategories).slice(0, 2);
+
+                        // Set the text content for the element
+                        document.getElementById('uniqueCategoryNames').textContent = finalCategories.join(', ').trim() || '';
+                        
+                        const categoryElement = document.getElementById('uniqueCategoryNames');
+                        if (categoryElement) {
+                            // Check if any of the categories match the specific threat types
+                            const hasThreatCategory = finalCategories.some(category => 
+                                ['Malicious', 'Phishing', 'Security threats'].includes(category)
+                            );
+
+                            // Apply red color (has-text-danger) if any of the threat categories are found
+                            if (hasThreatCategory) {
+                                categoryElement.className = 'tag is-danger'; // Red for threats
+                              
+                            } else {
+                                categoryElement.className = 'tag is-info'; // Green (default) for safe categories
+                            
+                            }
+                        }
+
+                    })
+
                     } else if (data.scanStatus !== 'completed') {
                         urlError.innerText = 'No scan is currently running, or the scan is not yet completed.';
                         urlError.style.color = 'red';
@@ -621,39 +885,50 @@ function decodeNPrintText(){
 
         else if (event.target && event.target.id === 'qrScanURL') {
             const decodedElement = document.getElementById('decoded-data');
-            // Regular expression to validate URL format
-            const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?(\?.*)?(#.*)?$/;
-            
+            // Regular expression to validate standard URL format (domain-based URLs)
+            const urlPattern1 = /^(https?:\/\/)?(www\.)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?(\?.*)?(#.*)?$/;
+            // Regular expression to validate IP addresses with optional ports and paths
+            const urlPattern2 = /^(https?:\/\/)?(\d{1,3}\.){3}\d{1,3}(:\d+)?(\/[\w\-\.]+)*\/?(\?.*)?(#.*)?$/;
+        
             if (decodedElement) {
-                const decodedText = decodedElement.textContent;
-                const enteredURL = decodedText.valueOf;
-                console.log('Entered URL:', enteredURL);
-
+                const decodedText = decodedElement.textContent.trim();  // Ensure there is no leading/trailing space
+                console.log('Entered URL:', decodedText);
+        
+                // Validate if the decoded text exists and is not empty
                 if (!decodedText) {
                     document.getElementById('qrDecodedAction').textContent = "Error: Content is empty";
                     return;
-                } else if (!urlPattern.test(decodedText)) {
-                    document.getElementById('qrDecodedAction').textContent = "Error: Invalid URL format";
+                }
+        
+                // Validate the URL format using the regex
+                if (!urlPattern1.test(decodedText) && !urlPattern2.test(decodedText)) {
+                    document.getElementById('urlError').innerText = 'Error: Invalid URL format';
                     return;
                 }
-    
-                // Reset state before starting a new analysis
+        
+                // Reset state and initiate loading animation
                 resetState();
-
                 content.innerHTML = loadingContent;
-                const loader = loadingAnimation();                 
 
-                // Send a message to the background script
-                chrome.runtime.sendMessage({ action: 'scanURL', url: enteredURL }, (response) => {
-                    clearInterval(loader); // Stop loading animation
+                document.getElementById('loader').style.display = 'block';  
+                document.getElementById('processMessages').style.display = 'block';  
+
+                const errorElement = document.getElementById('scanError');
+                errorElement.style.display = 'none';  // Hide the error message
+                errorElement.innerText = '';  // Clear the error message text
+                errorElement.classList.remove('has-text-danger');  // Remove red color
+
+                const loader = loadingAnimation();
+        
+                // Send the decoded URL for scanning
+                chrome.runtime.sendMessage({ action: 'scanURL', url: decodedText }, (response) => {
+                    clearInterval(loader);
                     console.log('Response from background:', response);
                 });
-
-            }else {
+        
+            } else {
                 console.error('Error: decoded text element not found');
             }
-        
-            
         }
 
         else if (event.target && event.target.id ==='fullReportButton'){
@@ -693,72 +968,35 @@ function decodeNPrintText(){
             // Process virusTotalResult messages
             if (message.type === "virusTotalResult") {
                 console.log("VT data received...");
-                const virusTotalData = message.data;
 
-                title = virusTotalData.title || 'N/A';
-                console.log("title: "+title);
-                lastAnalysisDate =  virusTotalData.lastAnalysisDate || 'N/A';
-                threatName = virusTotalData.threatName || 'None';
-                reputation = virusTotalData.reputation || 'N/A';
-                category = virusTotalData.category || 'N/A';
-                totalEngines = virusTotalData.totalEngines || '96';
-                flag = virusTotalData.flag || '0';
-                // virustotalURL = virusTotalData.virustotalURL;
                 messagePromises.virusTotalResultResolve();
                 messagesReceived++;
-                analyzeResults();
+                
             }
 
             // Process URLScanIoResult messages
             if (message.type === "URLScanIoResult") {
                 console.log("urlscanio data received...");
-                const urlScanData = message.data;
-
-                ip = urlScanData.ip || 'N/A';
-
-                url = urlScanData.url || 'N/A';
-
-                domain= urlScanData.domain || 'N/A';
-
-                city = urlScanData.city || 'N/A';
-
-                country = urlScanData.country || 'N/A';
-
-                tlsIssuer = urlScanData.tlsIssuer || 'N/A';
-
-                tlsValidFrom = urlScanData.tlsValidFrom || 'N/A';
-
-                tlsValidDays = urlScanData.tlsValidDays || 'N/A';
-
-                // urlscanioURL = urlScanData.urlscanioURL;
                 
                 messagePromises.URLScanIoResultResolve();
                 messagesReceived++;
-                analyzeResults();
+                
             }
 
             // Process cloudflareResult messages
             if (message.type === "cloudflareResult") {
-                const cloudflareData = message.data;
+
                 console.log("clouflare data received...");
-
-                uniqueCategoryNames = cloudflareData.uniqueCategoryNames || 'N/A';
-
-                rankResults = cloudflareData.rankResults || 'N/A';
-
-                ipsList = cloudflareData.ipsList || 'None';
-
-                domainsList = cloudflareData.domainsList || 'N/A';
-                //cloudflareURL = cloudflareData.cloudflareURL;
                 
-                screenshotURL=cloudflareData.screenshotURL;
-                console.log(`ssURL : ${cloudflareData.screenshotURL}`)
                 messagePromises.cloudflareResultResolve(); 
                 messagesReceived++;
-                analyzeResults();
+                
             }
             
-            
+            if (messagesReceived === 3) {
+                console.log("all 3 done, go analyse page")
+                analyzeResults();
+            }
             
         });
         function resetState() {
@@ -784,9 +1022,7 @@ function decodeNPrintText(){
             screenshotURL = 'N/A';
             ipsList = 'N/A';
             domainsList = 'N/A';
-            //cloudflareURL='N/A';
-            //urlscanioURL='N/A';
-            //virustotalURL='N/A';
+
         
             // Reinitialize messagePromises
             messagePromises.virusTotalResult = new Promise((resolve) => {

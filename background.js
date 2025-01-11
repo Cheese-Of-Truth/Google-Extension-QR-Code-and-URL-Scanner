@@ -2,6 +2,15 @@
 
 let isScanning = false; // Track if a scan is in progress
 
+function saveScanResult(data) {
+  chrome.storage.local.set(data, function () {
+      console.log("Scan data saved to local storage.");
+  });
+}
+
+
+
+
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'scanURL') {
@@ -74,7 +83,7 @@ async function scanUrlWithVirusTotal(url) {
       method: 'GET',
       headers: {
           accept: 'application/json',
-          'x-apikey': '51cfa3951567e12258950a036b7df191be44202d5090c925ad169979f7911f4c' // **Security Note:** Avoid hardcoding API keys.
+          'x-apikey': '51cfa3951567e12258950a036b7df191be44202d5090c925ad169979f7911f4c' 
       }
   };
 
@@ -151,7 +160,7 @@ async function submitUrlToVirusTotal(url) {
   const submitOptions = {
       method: 'POST',
       headers: {
-          'x-apikey': '51cfa3951567e12258950a036b7df191be44202d5090c925ad169979f7911f4c', // **Security Note:** Avoid hardcoding API keys.
+          'x-apikey': '51cfa3951567e12258950a036b7df191be44202d5090c925ad169979f7911f4c', 
           'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: `url=${encodeURIComponent(url)}`
@@ -184,8 +193,8 @@ function processVirusTotalData(data) {
   if (data && data.data && data.data.attributes) {
     console.log("checkpoint for new submit");
     console.log(data.data.attributes);
-      let title = data.data.attributes.title;
-      let lastAnalysisDate = new Date(data.data.attributes.last_analysis_date * 1000).toLocaleString();
+      let title = data.data.attributes.title|| 'N/A';
+      let lastAnalysisDate = new Date(data.data.attributes.last_analysis_date * 1000).toLocaleString()|| 'N/A';
       
       let threatNames = data.data.attributes.threat_names.length > 0 ? data.data.attributes.threat_names.join(', ') : "None";
       
@@ -216,18 +225,21 @@ function processVirusTotalData(data) {
           }
       }
 
+      saveScanResult( {
+        title: title,
+        lastAnalysisDate: lastAnalysisDate,
+        threatName: threatNames,
+        reputation: reputationStatus,
+        category: categories,
+        totalEngines: totalEngines,
+        flag: notHarmlessOrUndetected
+      });
+
       // Send data back to popup.js
       chrome.runtime.sendMessage({
           type: "virusTotalResult",
           data: {
-              title: title,
-              lastAnalysisDate: lastAnalysisDate,
-              threatName: threatNames,
-              reputation: reputationStatus,
-              category: categories,
-              totalEngines: totalEngines,
-              flag: notHarmlessOrUndetected,
-              // virustotalURL : virustotalURL
+            error: "saved to local"
           }
       });
   } else {
@@ -283,13 +295,16 @@ async function submitURLScanIo(urlToScan) {
             const dnsError = data.errors.find(error => error.title.includes('DNS Error'));
             if (dnsError) {
                 console.error('DNS Error:', dnsError.detail);
+                // Send the error message to popup.js
+                chrome.runtime.sendMessage({ type: 'dnsError', message: "DNS Error found: URL Not Exist" });
                 return; // Exit the function as no further processing is needed
             }
         }
 
         // Check for the unique scan UUID
         if (!data || !data.uuid) {
-            throw new Error("Scan UUID not found in the response.");
+            chrome.runtime.sendMessage({ type: 'dnsError', message: "Scanning is disabled by the URL owner" });
+                return; // Exit the function as no further processing is needed
         }
 
         const uuid = data.uuid;
@@ -340,18 +355,20 @@ async function submitURLScanIo(urlToScan) {
                           console.warn("No valid URL received from URLScan.io");
                       }
 
+                      saveScanResult( {
+                        ip: ip,
+                        url: url,
+                        domain: domain,
+                        city: city,
+                        country: country,
+                        tlsIssuer: tlsIssuer,
+                        tlsValidFrom: tlsValidFrom,
+                        tlsValidDays: tlsValidDays
+                      });
                         chrome.runtime.sendMessage({
                           type: "URLScanIoResult",
                           data: {
-                              ip: ip,
-                              url: url,
-                              domain: domain,
-                              city: city,
-                              country: country,
-                              tlsIssuer : tlsIssuer,
-                              tlsValidFrom : tlsValidFrom,
-                              tlsValidDays : tlsValidDays,
-                              // urlscanioURL : urlscanioURL
+                              error : "saved to local"
                           }
                       });
 
@@ -367,6 +384,8 @@ async function submitURLScanIo(urlToScan) {
 
     } catch (error) {
         console.error('Error:', error);
+        chrome.runtime.sendMessage({ type: 'dnsError', message: "Scanning is disabled by the URL owner" });
+        return; // Exit the function as no further processing is needed
     }
 }
 
@@ -431,13 +450,14 @@ async function scanWithCloudflare(scanURL) {
     }
   } catch (err) {
     console.error('Error:', err);
+    chrome.runtime.sendMessage({ type: 'dnsError', message: err });
   }
 
     async function handleResults(resultsData) {
       // Log the rank and categories
-    const rank = resultsData.result.scan?.meta?.processors?.rank;
+    const rank = resultsData.result.scan?.meta?.processors?.rank|| "N/A"; ;
     // Extract categories from resultsData
-    const categories = resultsData.result.scan?.meta?.processors?.categories;
+    const categories = resultsData.result.scan?.meta?.processors?.categories|| {}; 
       // Function to recursively find all unique names
     function extractUniqueNames(obj, namesSet = new Set()) {
       if (obj && typeof obj === 'object') {
@@ -457,21 +477,24 @@ async function scanWithCloudflare(scanURL) {
     let rankResults = JSON.stringify(rank, null, 2);
     let ipsList = resultsData.result.scan.lists.ips|| [];;
     let domainsList = resultsData.result.scan.lists.domains|| [];;
-    // let cloudflareURL= `https://api.cloudflare.com/client/v4/accounts/${accountId}/urlscanner/scan/`+uuid;
     
     console.log(uuid);
     
-    screenshotURL="https://radar.cloudflare.com/api/url-scanner/"+uuid+"/screenshot?resolution=desktop";
+    screenshotURL=`https://radar.cloudflare.com/api/url-scanner/${uuid}/screenshot?resolution=desktop` || "N/A"; 
     console.log(screenshotURL);
-  
-    chrome.runtime.sendMessage({
-    type: "cloudflareResult",
-    data: {
+
+    saveScanResult({
       uniqueCategoryNames : uniqueCategoryNames,
       rankResults : rankResults,
       ipsList : ipsList,
       domainsList : domainsList,
-      screenshotURL : screenshotURL,
+      screenshotURL : screenshotURL
+    });
+  
+    chrome.runtime.sendMessage({
+    type: "cloudflareResult",
+    data: {
+      error : "saved to local"
       // cloudflareURL : cloudflareURL
       }
     });
@@ -517,6 +540,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       });
 
       // Allow asynchronous response
+      return true;
+  }
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'checkScanError') {
+      chrome.storage.local.get(['scanStatus'], (data) => {
+          sendResponse({
+              isScanning: isScanning,
+              scanStatus: data.scanStatus || 'none'
+          });
+      });
+
+
       return true;
   }
 });
