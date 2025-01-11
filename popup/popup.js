@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', function() {
     const toggleButton = document.getElementById('toggleButton');
     const content = document.getElementById('content');
@@ -952,10 +950,7 @@ function decodeNPrintText(){
                 rankResults : rankResults,
                 screenshotURL : screenshotURL,
                 ipsList : ipsList,
-                domainsList : domainsList,
-                // virustotalURL : virustotalURL,
-                // cloudflareURL : cloudflareURL,
-                // urlscanioURL : urlscanioURL
+                domainsList : domainsList
             };
                 
            openDetailsPage(sampleData);

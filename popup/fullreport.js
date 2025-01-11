@@ -2,9 +2,7 @@ window.onload = function () {
     // Retrieve data from chrome.storage.local instead of localStorage
     const storedData = localStorage.getItem('detailData');
     const parsedData = JSON.parse(storedData);
-    // console.log("test1");
     console.log(`print in fullreport.js: ${storedData}`);
-    // console.log("test2");
         if (storedData) {
             
             document.getElementById('title').innerText = `Title: ${parsedData.title}`;
@@ -25,10 +23,7 @@ window.onload = function () {
             document.getElementById('screenshotURL').src =  (parsedData.screenshotURL);
             document.getElementById('ipsList').innerText = `IPs List: ${ (parsedData.ipsList)}`;
             document.getElementById('domainsList').innerText = `Domains List: ${ (parsedData.domainsList)}`;
-            // document.getElementById('virustotalURL').innerText = `virusTotal: ${ (parsedData.virustotalURL)}`;
-            // document.getElementById('cloudflareURL').innerText = `Cloudflare Radar: ${ (parsedData.cloudflareURL)}`;
-            // document.getElementById('urlscanioURL').innerText = `Urlscanio: ${ (parsedData.urlscanioURL)}`;
-            
+      
             document.getElementById('downloadButton').addEventListener('click', function () {
                 const content = document.documentElement.outerHTML;
                 const blob = new Blob([content], { type: 'text/html' });

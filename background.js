@@ -1,4 +1,9 @@
 // background.js
+const VIRUSTOTAL_API_KEY = 'YOUR_API_KEY'; // Replace with your actual VIRUSTOTAL API token
+const URLSCANIO_API_KEY = "YOUR_API_KEY"; // Replace with your actual URLSCANIO API token
+const CLOUDFLARE_API_KEY = 'YOUR_API_KEY'; // Replace with your actual CLOUDFLARE API token
+const CLOUDFLARE_ACC_ID = 'YOUR_API_KEY'; // Replace with your actual cloudflare Account ID
+const CLOUDFLARE_EMAIL = 'your_account@gmail.com'; // Replace with your email of cloudflare Account
 
 let isScanning = false; // Track if a scan is in progress
 
@@ -7,10 +12,6 @@ function saveScanResult(data) {
       console.log("Scan data saved to local storage.");
   });
 }
-
-
-
-
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'scanURL') {
@@ -62,7 +63,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-// Define your API functions here or import them
 // Function to URL-safe Base64 encode the input
 function urlsafeBase64Encode(input) {
   const encoded = btoa(unescape(encodeURIComponent(input)));
@@ -83,7 +83,7 @@ async function scanUrlWithVirusTotal(url) {
       method: 'GET',
       headers: {
           accept: 'application/json',
-          'x-apikey': '51cfa3951567e12258950a036b7df191be44202d5090c925ad169979f7911f4c' 
+          'x-apikey': VIRUSTOTAL_API_KEY
       }
   };
 
@@ -160,7 +160,7 @@ async function submitUrlToVirusTotal(url) {
   const submitOptions = {
       method: 'POST',
       headers: {
-          'x-apikey': '51cfa3951567e12258950a036b7df191be44202d5090c925ad169979f7911f4c', 
+          'x-apikey': VIRUSTOTAL_API_KEY, 
           'Content-Type': 'application/x-www-form-urlencoded'
       },
       body: `url=${encodeURIComponent(url)}`
@@ -266,8 +266,6 @@ function delay(ms) {
 // Define the API endpoint and API key
 const apiEndpoint = "https://urlscan.io/api/v1/scan/";
 const resultEndpoint = "https://urlscan.io/api/v1/result/"; // Define resultEndpoint
-const apiKey = "4ed62301-3829-4c55-9451-8fe1b83087c9"; // Replace with your actual API key
-
 
 // Function to submit scan and poll results
 async function submitURLScanIo(urlToScan) {
@@ -277,7 +275,7 @@ async function submitURLScanIo(urlToScan) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'API-Key': apiKey
+            'API-Key': URLSCANIO_API_KEY
         },
         body: JSON.stringify({
             url: urlToScan,
@@ -396,16 +394,12 @@ async function submitURLScanIo(urlToScan) {
 
 //get screenshot, cookies, http transaction, domain name, domain categorize
 
-const apiToken = '37c0cece09b2f4c599d05dbf20761ba57fd09'; // Replace with your actual API token
-const accountId = '274fd555e488dbf9ce23f897bf5e7a85'; // Replace with your actual Account ID
-const email = 'ctfjd1234@gmail.com'; // Replace with your actual email
-
 async function scanWithCloudflare(scanURL) {
   const options = {
     method: 'POST',
     headers: {
-      'X-Auth-Email': email,
-      'X-Auth-Key': apiToken,
+      'X-Auth-Email': CLOUDFLARE_EMAIL,
+      'X-Auth-Key': CLOUDFLARE_API_KEY,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ url: scanURL })
@@ -419,7 +413,7 @@ async function scanWithCloudflare(scanURL) {
   let screenshotURL="";
 
   try {
-    const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/urlscanner/scan`, options);
+    const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACC_ID}/urlscanner/scan`, options);
     if (!response.ok) {
       const errorData = await response.json();
       if (response.status === 409 && errorData.errors && errorData.errors.length > 0) {
@@ -473,10 +467,10 @@ async function scanWithCloudflare(scanURL) {
     }
 
     const uniqueNames = extractUniqueNames(categories);
-    let uniqueCategoryNames = Array.from(uniqueNames).join(', ');
-    let rankResults = JSON.stringify(rank, null, 2);
-    let ipsList = resultsData.result.scan.lists.ips|| [];;
-    let domainsList = resultsData.result.scan.lists.domains|| [];;
+    uniqueCategoryNames = Array.from(uniqueNames).join(', ');
+    rankResults = JSON.stringify(rank, null, 2);
+    ipsList = resultsData.result.scan.lists.ips|| [];;
+    domainsList = resultsData.result.scan.lists.domains|| [];;
     
     console.log(uuid);
     
@@ -507,27 +501,46 @@ async function scanWithCloudflare(scanURL) {
   // Function to poll for results
   async function pollForResults(scanUuid) {
     const resultsOptions = {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Auth-Email': email,
-        'X-Auth-Key': apiToken
-      }
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Auth-Email': CLOUDFLARE_EMAIL,
+            'X-Auth-Key': CLOUDFLARE_API_KEY
+        }
     };
 
-    while (true) {
-      const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/urlscanner/scan/${scanUuid}`, resultsOptions);
-      if (response.status === 202) {
-        console.log('Scan in progress, polling again (cloudflare)...');
-        await new Promise(resolve => setTimeout(resolve, 5000)); // Poll every 5 seconds
-      } else if (response.status === 200) {
-        return await response.json();
-      } else {
-        const errorData = await response.json();
-        throw new Error(`HTTP error! Status: ${response.status}, Details: ${JSON.stringify(errorData)}`);
-      }
+    const maxWaitTime = 2 * 60 * 1000; // 2 minutes
+    const pollInterval = 5000; // 5 seconds
+    let elapsedTime = 0;
+
+    while (elapsedTime < maxWaitTime) {
+        const response = await fetch(
+            `https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACC_ID}/urlscanner/scan/${scanUuid}`, 
+            resultsOptions
+        );
+
+        if (response.status === 202) {
+            console.log('Scan in progress, polling again (cloudflare)...');
+            elapsedTime += pollInterval;
+            await new Promise(resolve => setTimeout(resolve, pollInterval));
+        } else if (response.status === 200) {
+            return await response.json(); // Successfully received results
+        } else {
+            // Send the error message
+            chrome.runtime.sendMessage({ 
+                type: 'dnsError', 
+                message: "Unexpected error from Cloudflare, try again later" 
+            });
+            return; // Exit the function as no further processing is needed
+        }
     }
-  }
+
+    // Timeout after max wait time
+    chrome.runtime.sendMessage({ 
+        type: 'dnsError', 
+        message: "Scanning timed out after 2 minutes." 
+    });
+    return; // Exit the function
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
