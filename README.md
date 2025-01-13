@@ -42,7 +42,7 @@
 10. Register Cloudflare account at: https://dash.cloudflare.com/login
 11. Navigate to **Compute (Workers)** > **Worker & Pages**
 12. Create a Worker
-<img src="https://github.com/user-attachments/assets/b10ce020-c563-4373-b67d-a44d27132948" width="500"/>
+<img src="https://github.com/user-attachments/assets/351cf21d-e795-4abe-b0ae-a36062aaa5e0" width="500"/>
     
 13. Deploy the Worker directly (it doesn’t matter what we have deployed, we just want to reveal the account ID in the dashboard)
 <img src="https://github.com/user-attachments/assets/0971fbf3-4756-43ed-bcc1-ee419464b645" width="500"/>
