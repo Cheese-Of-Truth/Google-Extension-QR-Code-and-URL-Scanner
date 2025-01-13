@@ -1,4 +1,3 @@
-// background.js
 const VIRUSTOTAL_API_KEY = 'YOUR_API_KEY'; // Replace with your actual VIRUSTOTAL API token
 const URLSCANIO_API_KEY = "YOUR_API_KEY"; // Replace with your actual URLSCANIO API token
 const CLOUDFLARE_API_KEY = 'YOUR_API_KEY'; // Replace with your actual CLOUDFLARE API token
@@ -301,7 +300,28 @@ async function submitURLScanIo(urlToScan) {
 
         // Check for the unique scan UUID
         if (!data || !data.uuid) {
-            chrome.runtime.sendMessage({ type: 'dnsError', message: "Scanning is disabled by the URL owner" });
+            //chrome.runtime.sendMessage({ type: 'dnsError', message: "Scanning is disabled by the URL owner" });
+            console.log('Scanning is disabled by the URL owner')
+            saveScanResult({
+              ip: 'Not supported',
+              url: urlToScan,
+              domain: 'Not supported',
+              city: 'Not supported',
+              country: 'Not supported',
+              tlsIssuer: 'Not supported',
+              tlsValidFrom: 'Not supported',
+              tlsValidDays: 'Not supported'
+          });
+          chrome.runtime.sendMessage({
+              type: 'URLScanIoResult',
+              data: {
+                  status: 'completed',
+                  message: 'Scan disabled by the URL owner. Default values set.'
+              }
+          });
+          console.log('Now start VirusTotal')
+          scanUrlWithVirusTotal(urlToScan);
+
                 return; // Exit the function as no further processing is needed
         }
 
@@ -541,6 +561,7 @@ async function scanWithCloudflare(scanURL) {
         message: "Scanning timed out after 2 minutes." 
     });
     return; // Exit the function
+  }
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
